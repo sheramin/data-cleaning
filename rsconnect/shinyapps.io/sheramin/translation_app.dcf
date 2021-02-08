@@ -1,0 +1,10 @@
+name: translation_app
+title:
+username:
+account: sheramin
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2775715
+bundleId: 4166831
+url: https://sheramin.shinyapps.io/translation_app/
+when: 1612181668.96832
