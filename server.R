@@ -187,32 +187,41 @@ shinyServer(function(input, output, session){
   
   #List columns for meta column selection
   observe({
+    #Load test data
+    #modi_data <- read_excel("./input/AFG2002_JMMI_November_2020_mod.xlsx", guess_max = 10000)
+    modi_data <- get_modified_data()
+    write_excel_csv(modi_data, "input/modi_data.csv")
+    modi_data <- read.csv("input/modi_data.csv", na.strings = "", encoding="UTF-8")
+    
     #Update meta column list
     updateSelectInput(session, "meta_cols",
                       choices = names(get_modified_data()),
+                      selected = NULL)
+    
+    #Update meta column list
+    updateSelectInput(session, "uuid_col",
+                      choices = names(modi_data),
                       selected = NULL)
   })
   
   observeEvent(input$run_logger, {
   showNotification(paste("Working on it... Will notify you once it's done!"), duration = 3, type = "message")
-  #Load test data
-  #modi_data <- read_excel("./input/AFG2002_JMMI_November_2020_modified.xlsx", guess_max = 10000)
-  modi_data <- get_modified_data()
-  write_excel_csv(modi_data, "input/modi_data.csv")
-  modi_data <- read.csv("input/modi_data.csv", na.strings = "", encoding="UTF-8")
   
-  #orig_data <- read_excel("./input/AFG2002_JMMI_November_2020_raw_data.xlsx", guess_max = 10000)
-  orig_data <- get_original_data()
-  write_excel_csv(orig_data, "input/orig_data.csv")
-  orig_data <- read.csv("input/orig_data.csv", na.strings = "", encoding="UTF-8")
-
+  #source("./functions/translation.R")
+    modi_data <- read.csv("input/modi_data.csv", na.strings = "", encoding="UTF-8")
+    
+    #orig_data <- read_excel("./input/AFG2002_JMMI_November_2020_raw_data.xlsx", guess_max = 10000)
+    orig_data <- get_original_data()
+    write_excel_csv(orig_data, "input/orig_data.csv")
+    orig_data <- read.csv("input/orig_data.csv", na.strings = "", encoding="UTF-8")
+    
   tryCatch({
     #Check the length and hight of datasets
     check_result <- check.data(modi_data, orig_data)
     if (length(check_result) > 0) {
       showNotification(paste(check_result, "Try again when you fixed it."), duration = 5, type = "error")
     }else{
-      myLogs <- create.log(modi_data, orig_data, uuid = "X_uuid", c(input$meta_cols))
+      myLogs <- create.log(modi_data, orig_data, df_uuid = input$uuid_col, c(input$meta_cols))
       write.xlsx(myLogs, "output/change_log.xlsx")
       #Success message
       Sys.sleep(2)

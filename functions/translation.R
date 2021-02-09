@@ -93,7 +93,7 @@ check <- function(rawDF, uuid_){
 
 #Create log
 #For meta columns, there could be a multi select column from data header
-create.log <- function(modiDf, origDf, uuid = "X_uuid", metaCols = vector()){
+create.log <- function(modiDf, origDf, df_uuid, metaCols = vector()){
   #Initiazling variables
   uuid <- vector() 
   question.name <- vector()
@@ -104,7 +104,7 @@ create.log <- function(modiDf, origDf, uuid = "X_uuid", metaCols = vector()){
     for (r in 1:nrow(origDf)) {
       if (as.character(origDf[[r, c]]) != as.character(modiDf[[r, c]])) {
         # append values to vectors
-        uuid <- c(uuid, as.character(modiDf[r, "X_uuid"]))
+        uuid <- c(uuid, as.character(modiDf[r, paste(df_uuid)]))
         question.name <- c(question.name, colnames(modiDf[c]))
         old.value <- c(old.value, as.character(origDf[[r, c]]))
         new.value <- c(new.value, as.character(modiDf[[r, c]]))
@@ -117,7 +117,7 @@ create.log <- function(modiDf, origDf, uuid = "X_uuid", metaCols = vector()){
   
   if(length(uuid) > 0){
     #Filter meta columns only for logged rows
-    extra_cols <- origDf %>% filter(X_uuid %in% uuid) %>% select(uuid = X_uuid, metaCols)
+    extra_cols <- origDf %>% filter(origDf[, paste(df_uuid)] %in% uuid) %>% select(uuid = df_uuid, metaCols)
     #Create data frame for grabbed logs
     logs <- data.frame(uuid, question.name, old.value, new.value)
     logs <- logs %>% left_join(extra_cols, by = c("uuid"))

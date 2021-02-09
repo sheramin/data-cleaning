@@ -52,6 +52,7 @@ shinyUI(fluidPage(
                           #Accept works only on browswer not in R built in html displayer
                           fileInput("modified_df", "Upload modified data(xlsx)", accept = c(".xlsx")),
                           fileInput("original_df", "Upload original data(xlsx)", accept = c(".xlsx")),
+                          selectInput('uuid_col','Select UUID column', choice = c("") , multiple=TRUE, selectize=TRUE),
                           selectInput('meta_cols','Select Meta columns', choice = c("") , multiple=TRUE, selectize=TRUE),
                           hr(),
                           actionButton("run_logger", "Run logger", icon("rocket")),
